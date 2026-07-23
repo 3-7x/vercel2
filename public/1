@@ -1,0 +1,96 @@
+local Library = loadstring(game:HttpGet("https://pastefy.app/x5yy0Jpp/raw"))() 
+local function load(url)
+loadstring(game:HttpGet(url))()
+end
+Library:Init(Enum.KeyCode.T) -- hide bind
+
+local DebugPanel = Library:CreatePanel("Debug", 20, 50)
+
+DebugPanel:CreateButton({
+  Name = "Infy", Callback = function()
+    load("https://pastefy.app/agqWszw5/raw")
+    end})
+
+DebugPanel:CreateButton({
+    Name = "Simple Spy",
+    Callback = function()
+         load("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua")
+    end 
+})
+
+DebugPanel:CreateButton({
+    Name = "Cobalt",
+    Callback = function()
+         load("https://github.com/notpoiu/cobalt/releases/latest/download/Cobalt.luau")
+    end 
+})
+
+DebugPanel:CreateButton({
+    Name = "Ketamine",
+    Callback = function()
+        load("https://raw.githubusercontent.com/InfernusScripts/Ketamine/refs/heads/main/Ketamine.lua")
+    end
+})
+
+DebugPanel:CreateButton({
+    Name = "Dex",
+    Callback = function()
+        load("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua")
+    end
+})
+
+DebugPanel:CreateButton({
+    Name = "Product Faker",
+    Callback = function()
+        load("https://pastefy.app/yVlxzwk8/raw")
+    end
+})
+
+DebugPanel:CreateButton({
+    Name = "Fire Every Remote",
+    Callback = function()
+        load("https://pastefy.app/XVeMdVfN/raw")
+    end
+})
+
+DebugPanel:CreateButton({
+    Name = "TPPos",
+    Callback = function()
+        load("https://pastefy.app/9N8TIL9l/raw")
+    end
+})
+
+local panel2 = Library:CreatePanel("Funny", 205, 50)
+
+panel2:CreateToggle({ Name = "Toggle me", Callback = function(v) end })
+
+panel2:CreateButton({ Name = "Fly", Callback = function()
+load("https://pastefy.app/fDIbTKHX/raw")
+end })
+
+panel2:CreateButton({
+  Name = "Sword Kill", Callback = function()
+    load("https://pastefy.app/S0kqeeoa/raw")
+     end})
+
+panel2:CreateButton({
+  Name = "Ring", Callback = function()
+    load("https://pastefy.app/7J4mm46B/raw")
+     end})
+
+panel2:CreateButton({
+  Name = "7YD7", Callback = function()
+    load("https://raw.githubusercontent.com/7yd7/Hub/refs/heads/Branch/GUIS/Emotes.lua")
+     end})
+
+panel2:CreateButton({
+  Name = "Instaprox", Callback = function()
+    load("https://pastefy.app/5ArRAJgZ/raw")
+     end})
+
+local bestpanel = Library:CreatePanel("Worlds Best Script", 20, 284)
+
+bestpanel:CreateButton({
+  Name = "OpenViz", Callback = function()
+    load("https://raw.githubusercontent.com/3-7x/ClosedViz/refs/heads/main/l")
+     end})
