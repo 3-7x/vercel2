@@ -1,0 +1,65 @@
+w,c=workspace,Vector3.new(-73.7820282,69.7972946,818.966797)
+
+for _,x in pairs(w.MapFile:GetDescendants()) do
+
+pcall(function()
+                       if x.Position~=c and
+x.Name ~= "Spawns" then
+                       x:Destroy() end end)
+	     end -- most unreadable code awards
+
+pcall(function()
+w.Monetization:Destroy();w.FloatingModels:Destroy() end)
+
+if w:FindFirstChild("newmapyo") then
+w:FindFirstChild("newmapyo"):Destroy() end
+
+i=Instance.new("Part",w);i.Name="newmapyo"
+i.Position=c+Vector3.new(0,10.3,0)
+i.Anchored=true;i.Transparency=0.5;i.Color=Color3.fromRGB(0,0,0)
+i.Size = Vector3.new(2048,0,2048)
+
+wait(1)
+
+local Terrain = workspace:FindFirstChildWhichIsA("Terrain")
+local lighting = game.Lighting
+	Terrain.WaterWaveSize = 0
+	Terrain.WaterWaveSpeed = 0
+	Terrain.WaterReflectance = 0
+	Terrain.WaterTransparency = 1
+	lighting.GlobalShadows = false
+	lighting.FogEnd = 9e9
+	lighting.FogStart = 9e9
+	settings().Rendering.QualityLevel = 1
+	for _, v in pairs(game:GetDescendants()) do
+		if v:IsA("BasePart") then
+			v.CastShadow = false
+			v.Material = "Plastic"
+			v.Reflectance = 0
+			v.BackSurface = "SmoothNoOutlines"
+			v.BottomSurface = "SmoothNoOutlines"
+			v.FrontSurface = "SmoothNoOutlines"
+			v.LeftSurface = "SmoothNoOutlines"
+			v.RightSurface = "SmoothNoOutlines"
+			v.TopSurface = "SmoothNoOutlines"
+			
+		elseif v:IsA("Decal") then v:Destroy()
+		elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then v:Destroy()
+		
+		end
+	end
+	for _, v in pairs(lighting:GetDescendants()) do
+		if v:IsA("PostEffect") then
+			v.Enabled = false
+		end
+	end
+	workspace.DescendantAdded:Connect(function(child)
+		task.spawn(function()
+			if child:IsA("ForceField") or child:IsA("Sparkles") or child:IsA("Smoke") or child:IsA("Fire") or child:IsA("Beam") then
+				RunService.Heartbeat:Wait()
+				child:Destroy()
+			elseif child:IsA("BasePart") then
+				child.CastShadow = false
+			end
+		end)
+end) -- clear map antilag
