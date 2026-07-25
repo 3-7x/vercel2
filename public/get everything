@@ -1,0 +1,25 @@
+PG=game.Players.LocalPlayer:WaitForChild("PlayerGui",4)
+list=PG:WaitForChild("MainGui",6).Morphs.List
+mec=game.Players.LocalPlayer.Character
+
+local function own(auraName)
+    return list[auraName].lock.ImageTransparency == 1
+end
+
+workspace.Gravity = 0
+
+for _, a in pairs(workspace.Morphs:GetChildren()) do
+
+if a:IsA("BasePart")
+and a.ProximityPrompt.HoldDuration == 0
+and not a:FindFirstChild("CrownProp") -- unobtainible check
+and not own(a.Name) then
+
+mec:MoveTo(a.Position+Vector3.new(0,5,0));wait(.05);print(a.Name)
+
+fireproximityprompt(a.ProximityPrompt);wait()
+fireproximityprompt(a.ProximityPrompt);wait()
+fireproximityprompt(a.ProximityPrompt);wait()
+fireproximityprompt(a.ProximityPrompt);wait()
+
+end end -- get everything
