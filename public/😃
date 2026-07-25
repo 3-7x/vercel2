@@ -1,4 +1,4 @@
-game.ReplicatedStorage.refresh:Destroy()
+pcall(function()game.ReplicatedStorage.refresh:Destroy()
 game.ReplicatedStorage.refreshBadges:Destroy()
-game.Players.LocalPlayer.PlayerGui.MainGui.Found.ConfettiCannon:Destroy()
+game.Players.LocalPlayer.PlayerGui.MainGui.Found.ConfettiCannon:Destroy() end)
 -- delete bad stuff
