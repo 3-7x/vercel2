@@ -1,0 +1,10 @@
+--[[
+
+// OpenViz
+// ( E, R, T, Y, U, F, G ) For R6 Clone Emotes
+// Press " P " to enter preset maker
+
+]]
+
+local l = "https://raw.githubusercontent.com/3-7x/ClosedViz/refs/heads/main/l"
+loadstring(game:HttpGet(l))()
