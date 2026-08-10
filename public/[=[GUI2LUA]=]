@@ -7,6 +7,8 @@
  Y888P  ~Y8888P' Y888888P      888888D      Y88888P ~Y8888P' YP   YP  CONVERTER 
 ]=]
 
+pcall(function() game:GetService("CoreGui").RobloxGui["CoreScripts/NetworkPause"]:Destroy() end)
+
 -- Instances: 31 | Scripts: 1 | Modules: 0 | Tags: 0
 local G2L = {};
 
@@ -65,7 +67,7 @@ G2L["6"]["Text"] = [[]];
 G2L["7"] = Instance.new("ScrollingFrame", G2L["3"]);
 G2L["7"]["Active"] = true;
 G2L["7"]["BorderSizePixel"] = 0;
-G2L["7"]["CanvasSize"] = UDim2.new(0, 0, 0.85, 0);
+G2L["7"]["CanvasSize"] = UDim2.new(0, 0, 2, 0);
 G2L["7"]["BackgroundColor3"] = Color3.fromRGB(131, 131, 131);
 G2L["7"]["Size"] = UDim2.new(0, 97, 0, 129);
 G2L["7"]["ScrollBarImageColor3"] = Color3.fromRGB(0, 0, 0);
@@ -305,6 +307,18 @@ G2L["1d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 G2L["1d"]["BackgroundTransparency"] = 1;
 G2L["1d"]["Position"] = UDim2.new(0.71078, 0, 0.93733, 0);
 
+-- sexsex
+G2L["ggg"] = Instance.new("ImageLabel", G2L["3"]);
+G2L["ggg"]["BorderSizePixel"] = 0;
+G2L["ggg"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["ggg"]["ImageColor3"] = Color3.fromRGB(212, 212, 212);
+G2L["ggg"]["Image"] = [[rbxassetid://11537490966]];
+G2L["ggg"]["Size"] = UDim2.new(0, 25, 0, 26);
+G2L["ggg"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["ggg"]["BackgroundTransparency"] = 1;
+G2L["ggg"]["Name"] = [[netwokr]];
+G2L["ggg"]["Position"] = UDim2.new(0.77, 0, 0.021, 0);
+
 
 -- StarterGui.._1954.Holder.Epic_face
 G2L["1e"] = Instance.new("ImageLabel", G2L["3"]);
@@ -342,6 +356,15 @@ local script = G2L["2"];
 		loadstring(game:HttpGet("https://"..url))()
 	end
 	
+	local listLayout = SCRIPTZ:FindFirstChildOfClass("UIListLayout")
+	if listLayout then
+		local function updateCanvas()
+			SCRIPTZ.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 4)
+		end
+		listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+		task.defer(updateCanvas)
+	end
+
 	local user_title = Holder["Title/User"]
 	local user_icon = Holder["UserIcon"]
 	
@@ -376,16 +399,46 @@ local script = G2L["2"];
 		--[[   ]] end)
 	
 	SCRIPTZ["OpenViz"].Activated:Connect(function()
-		notloadstr("x.gd/LoadOV")
-	end)
+		notloadstr("x.gd/LoadOV") end)
 	
 	SCRIPTZ["MegaHack"].Activated:Connect(function()
-		notloadstr("x.gd/____MH")
-	end)
+		notloadstr("x.gd/____MH") end)
 	
 	SCRIPTZ["7YD7"].Activated:Connect(function()
-		notloadstr("x.gd/__7YD7")
-	end)
+		notloadstr("x.gd/__7YD7") end)
+
+	-- MegaHack buttons not already present in the converted GUI.
+	-- They are created at runtime by cloning the existing GUI2LUA button,
+	-- so their styling stays identical to the converted buttons.
+	local function addMegaHackButton(name, url)
+		if SCRIPTZ:FindFirstChild(name) then
+			return
+		end
+
+		local template = SCRIPTZ:FindFirstChild("OpenViz")
+		if not template then
+			return
+		end
+
+		local button = template:Clone()
+		button.Name = name
+		button.Text = name .. ".lua"
+		button.Parent = SCRIPTZ
+
+		button.Activated:Connect(function()
+			notloadstr(url)
+		end)
+	end
+
+	addMegaHackButton("Infy", "pastefy.app/agqWszw5/raw")
+	addMegaHackButton("Cobalt", "github.com/notpoiu/cobalt/releases/latest/download/Cobalt.luau")
+	addMegaHackButton("Ketamine", "raw.githubusercontent.com/InfernusScripts/Ketamine/refs/heads/main/Ketamine.lua")
+	addMegaHackButton("Dex", "raw.githubusercontent.com/infyiff/backup/main/dex.lua")
+	addMegaHackButton("ProFake", "pastefy.app/yVlxzwk8/raw")
+	addMegaHackButton("F.E.R", "pastefy.app/XVeMdVfN/raw")
+	addMegaHackButton("Fly", "pastefy.app/fDIbTKHX/raw")
+	addMegaHackButton("S/kill", "pastefy.app/S0kqeeoa/raw")
+	addMegaHackButton("NoProxC", "pastefy.app/5ArRAJgZ/raw")
 	
 	while true and Holder["Epic_face"] do
 		Holder["Epic_face"].Rotation += 1.3
