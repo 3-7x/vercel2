@@ -1,15 +1,4 @@
---[=[
- d888b  db    db d888888b      .d888b.      db      db    db  .d8b.  
-88' Y8b 88    88   `88'        VP  `8D      88      88    88 d8' `8b 
-88      88    88    88            odD'      88      88    88 88ooo88 
-88  ooo 88    88    88          .88'        88      88    88 88~~~88 
-88. ~8~ 88b  d88   .88.        j88.         88booo. 88b  d88 88   88    @uniquadev
- Y888P  ~Y8888P' Y888888P      888888D      Y88888P ~Y8888P' YP   YP  CONVERTER 
-]=]
-
 pcall(function() game:GetService("CoreGui").RobloxGui["CoreScripts/NetworkPause"]:Destroy() end)
-
--- Instances: 31 | Scripts: 1 | Modules: 0 | Tags: 0
 local G2L = {};
 
 -- StarterGui.._1954
@@ -434,6 +423,7 @@ local script = G2L["2"];
 	addMegaHackButton("Cobalt", "github.com/notpoiu/cobalt/releases/latest/download/Cobalt.luau")
 	addMegaHackButton("Ketamine", "raw.githubusercontent.com/InfernusScripts/Ketamine/refs/heads/main/Ketamine.lua")
 	addMegaHackButton("Dex", "raw.githubusercontent.com/infyiff/backup/main/dex.lua")
+        addMegaHackButton("ConsCopy", "rawz.vercel.app/Console%20Copy")
 	addMegaHackButton("ProFake", "pastefy.app/yVlxzwk8/raw")
 	addMegaHackButton("F.E.R", "pastefy.app/XVeMdVfN/raw")
 	addMegaHackButton("Fly", "pastefy.app/fDIbTKHX/raw")
