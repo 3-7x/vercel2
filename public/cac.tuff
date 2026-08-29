@@ -1,6 +1,7 @@
-('hi somebody'):sub(0.0)
+('hi somebody'):sub(0)
 local plrs = game:GetService("Players")
 local rs = game:GetService("ReplicatedStorage")
+local theremote = rs.Events.CatalogGuiRemote
 
 local function rgb(c) return {
 		r = math.floor(c.R * 255),
@@ -92,7 +93,7 @@ local function copy(targetPlayer)
 		["Action"] = "CreateAndWearHumanoidDescription",
 		["RigType"] = h.RigType
 	}}
-	rs.CatalogGuiRemote:InvokeServer(unpack(wear))
+theremote:InvokeServer(unpack(wear))
 
 	rs.Events.SavedOutfitsRemote:InvokeServer({
 		OutfitName = "Saved-Fit",
