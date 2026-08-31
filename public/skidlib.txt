@@ -335,7 +335,7 @@ function Library:CreateWindow(cfg)
 	local DcBtn    = ctrlBtn("discord", -74, Color3.fromRGB(88, 101, 242))
 
 	local DC_LINK = "https://discord.gg/9cKvvqV2sC"
-	local DC_CODE = ""
+	local DC_CODE = "9cKvvqV2sC"
 
     DcBtn.Activated:Connect(function()
 		local copied = copyToClipboard(DC_LINK)
