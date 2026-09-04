@@ -659,4 +659,19 @@ MiscTab:CreateToggle({
 
 Library:Notify({Title = "// epic ia hax", Content = "succesfully haxxored", Duration = 3})
 Library:Notify({Title="// abcdefghijklmnop", Content ="skill issue diagnosed",Duration=4})
--- 662 lines long
+
+LocalPlayer.CharacterAdded:Connect(function()
+hum       = getcharacter():WaitForChild("Humanoid")
+animator  = hum:WaitForChild("Animator")
+end)
+
+MainTab:CreateSlider({
+    Name = "FOV Circle Radius",
+    Min = 30,
+    Max = 300,
+    Default = cfg.FOVRadius,
+    Increment = 5,
+    Callback = function(v)
+        cfg.FOVRadius = v
+        f.Size = UDim2.fromOffset(v * 2, v * 2)
+end}) -- 677 line long
