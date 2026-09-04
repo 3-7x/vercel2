@@ -1,0 +1,662 @@
+_1954real_ = [[
+
+hello hellohe lllheeho ohleehl oeheoehehl leh eohelheohelhelhelhelhellhe
+discord.gg/8c9km5TvRh ^ @1.954
+\\ pls come
+__best item asylum script tooo ever exiiist
+
+]]
+
+local Library          = loadstring(game:HttpGet("https://rawz.vercel.app/skidlib.txt"))()
+local Players          = game:GetService("Players")
+local LocalPlayer      = Players.LocalPlayer
+local Workspace        = game:GetService("Workspace")
+local Lighting         = game:GetService("Lighting")
+local TextChatService  = game:GetService("TextChatService")
+local UserInputService = game:GetService("UserInputService")
+local RunService       = game:GetService("RunService")
+local Camera           = workspace.CurrentCamera
+
+local function getcharacter()
+    return LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+end
+
+local hum       = getcharacter():WaitForChild("Humanoid")
+local animator  = hum:WaitForChild("Animator")
+
+local All_Anims = {}
+local Anim_Names = {}
+local Anim_By_Name = {}
+local rs             = game:GetService("ReplicatedStorage")
+
+local track
+local Animaxor_Selected
+
+local function Play(animaxor)
+     track = animator:LoadAnimation(animaxor)
+     track:Play()
+end
+
+function StopAnimation()
+    for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
+        track:Stop()
+    end
+end
+
+for _, animation in ipairs(rs:GetDescendants()) do
+    if animation:IsA("Animation")  and 
+    animation.Name == "Animation"  and
+    animation.Parent:IsA("Folder") then
+        table.insert(All_Anims, animation)
+
+        local name = animation.Parent.Name
+        table.insert(Anim_Names, name)
+
+        Anim_By_Name[name] = animation
+    end
+end
+
+local function getroot()
+    local char = getcharacter()
+    if char and char:FindFirstChild("HumanoidRootPart") then return char.HumanoidRootPart end
+    local npcs = Workspace:FindFirstChild("NPCs")
+    if npcs then
+        local ragdolls = npcs:FindFirstChild("Ragdolls") or npcs
+        local myRagdoll = ragdolls:FindFirstChild(LocalPlayer.Name)
+        if myRagdoll then
+            return myRagdoll:FindFirstChild("HumanoidRootPart") or myRagdoll:FindFirstChildOfClass("BasePart")
+        end
+    end
+    return nil
+end
+
+if getgenv().imRunning then
+    getgenv().imRunning = false
+    task.wait(0.2)
+end
+getgenv().imRunning = true
+
+local isToggled = false
+local circleConnection = nil
+
+local Window = Library:CreateWindow({
+    Title = "// epic ia hax",
+    Accent = Color3.fromRGB((1e2 * 2), (250 - (88 + 1)), 255 - (1954 / 1954))
+})
+
+local MainTab = Window:CreateTab({ Name = "Main", Icon = "house" })
+local EspTab = Window:CreateTab({ Name = "Esp", Icon = "eye" })
+local MiscTab = Window:CreateTab({ Name = "Misc", Icon = "gear" })
+local EmoteTab = Window:CreateTab({ Name = "Fake Emote", Icon = "person-play" })
+
+EmoteTab:CreateDropdown({
+    Name = "Emotezz",
+    Options = Anim_Names,
+    Multi = false,
+    Callback = function(selected)
+        Animaxor_Selected = Anim_By_Name[selected]
+    end
+})
+
+EmoteTab:CreateButton({
+    Name = "Play Selected",
+    Callback = function() Play(Animaxor_Selected) end
+})
+
+EmoteTab:CreateButton({
+    Name = "Stop Animations",
+    Callback = function() StopAnimation() end
+})
+
+local RoleColors = {
+    murder = Color3.fromRGB(255, 0, 0),
+    sheriff = Color3.fromRGB(0, 170, 255),
+    watchdog = Color3.fromRGB(0, 0, 255),
+    innocent = Color3.fromRGB(0, 255, 0)
+}
+
+local cfg = {
+    FOVRadius   = 150,
+    FireKey     = Enum.KeyCode.F,
+    AccentColor = Color3.fromRGB(255, 255, 255),
+}
+
+local sg = Instance.new("ScreenGui")
+sg.Name = "fart"
+sg.ResetOnSpawn = false
+sg.IgnoreGuiInset = true
+sg.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+local f = Instance.new("Frame")
+f.Name = "fartframe"
+f.Size = UDim2.fromOffset(cfg.FOVRadius * 2, cfg.FOVRadius * 2)
+f.AnchorPoint = Vector2.new(0.5, 0.5)
+f.BackgroundTransparency = 1
+f.Visible = false
+f.Parent = sg
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = cfg.AccentColor
+stroke.Thickness = 1.5
+stroke.Parent = f
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(1, 0)
+corner.Parent = f
+
+local function startCircleTracking()
+    if circleConnection then return end
+    circleConnection = RunService.RenderStepped:Connect(function()
+        local mousePos = UserInputService:GetMouseLocation()
+        f.Position = UDim2.fromOffset(mousePos.X, mousePos.Y)
+    end)
+end
+
+local function stopCircleTracking()
+    if circleConnection then
+        circleConnection:Disconnect()
+        circleConnection = nil
+    end
+end
+
+local function setToggled(state)
+    isToggled = state
+    f.Visible = state
+
+    if state then
+        startCircleTracking()
+    else
+        stopCircleTracking()
+    end
+end
+
+
+
+local Toggles = {
+    RoleESP = false,
+    RoleTracer = false,
+    GunESP = false,
+    ClueESP = false,
+    NoCooldown = false,
+    Fullbright = false,
+    CameraLoop = false,
+    MurderCheck = false
+}
+
+local SelectedTracerRole = "murder"
+local OrigLighting = { fe = Lighting.FogEnd }
+local defZoom = LocalPlayer.CameraMaxZoomDistance
+local chatConnection = nil
+
+local function GetPlayerRole(p)
+    local role, hasItem = "innocent", false
+    for _, c in ipairs({p.Character, p:FindFirstChildOfClass("Backpack")}) do
+        if c then
+            for _, v in ipairs(c:GetDescendants()) do
+                if v:IsA("Tool") then
+                    hasItem = true
+                    local n = v.Name:lower()
+                    if n:find("watchdog", 1, true) then
+                        role = "watchdog"
+                    elseif n:sub(1, 3) == "mu_" and role ~= "watchdog" then
+                        role = "murder"
+                    end
+                end
+            end
+        end
+    end
+    return (role == "innocent" and hasItem) and "sheriff" or role
+end
+
+local function isValidTarget(model)
+    if not model or model == LocalPlayer.Character then return false, nil end
+    local player = Players:GetPlayerFromCharacter(model)
+    if Toggles.MurderCheck then
+        if GetPlayerRole(player) ~= "murder" then
+            return false, nil
+        end
+    end
+    local humanoid = model:FindFirstChildOfClass("Humanoid")
+    local head = model:FindFirstChild("Head")
+    if humanoid and head and humanoid.Health > 0 then
+        return true, head
+    end
+    return false, nil
+end
+
+local function getClosestHeadInFOV()
+    local mousePos = UserInputService:GetMouseLocation()
+    local closestHead = nil
+    local shortestDistance = cfg.FOVRadius
+
+    local function checkModel(model)
+        local valid, head = isValidTarget(model)
+        if not valid then return end
+
+        local screenPos, onScreen = Camera:WorldToViewportPoint(head.Position)
+        if not onScreen then return end
+
+        local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+        if dist < shortestDistance then
+            shortestDistance = dist
+            closestHead = head
+        end
+    end
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player.Character then
+            checkModel(player.Character)
+        end
+    end
+
+    local npcFolder = workspace:FindFirstChild("NPCs")
+    if npcFolder then
+        for _, npc in ipairs(npcFolder:GetChildren()) do
+            checkModel(npc)
+        end
+    end
+
+    return closestHead
+end
+
+local function buildFilterList(character)
+    local filterList = { character, Camera }
+
+    local debris = workspace:FindFirstChild("Debris")
+    if debris then
+        table.insert(filterList, debris)
+    end
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        local char = player.Character
+        if char and char:FindFirstChildOfClass("Humanoid") then
+            for _, item in ipairs(char:GetChildren()) do
+                if item:IsA("Accessory") or item:IsA("Tool") then
+                    table.insert(filterList, item)
+                end
+            end
+        end
+    end
+
+    return filterList
+end
+
+local function fireTargetedShot(targetHead)
+    local character = getcharacter()
+    if not character or not character.PrimaryPart then return end
+
+    local tool = character:FindFirstChildOfClass("Tool")
+    if not tool then return end
+
+    local remote = tool:FindFirstChild("Remote")
+    if not remote then return end
+
+    local startPos = (character.PrimaryPart.CFrame * CFrame.new(0, 1.5, 0)).Position
+    local offset = targetHead.Position - startPos
+    local direction = offset.Unit
+    local maxDist = offset.Magnitude + 10
+
+    local params = RaycastParams.new()
+    params.FilterType = Enum.RaycastFilterType.Exclude
+    params.CollisionGroup = "Raycasts"
+    params.FilterDescendantsInstances = buildFilterList(character)
+
+    local rayResult = workspace:Raycast(startPos, direction * maxDist, params)
+    if not rayResult then return end
+
+    local hitInstance = rayResult.Instance
+    local hitSize = hitInstance:IsA("BasePart") and hitInstance.Size or Vector3.zero
+
+    local config = tool:FindFirstChild("Config")
+    local spread = config and config:GetAttribute("Spread") or 0
+
+    remote:FireServer({{
+            StartPos      = startPos,
+            Position      = rayResult.Position,
+            Instance      = hitInstance,
+            Distance      = rayResult.Distance,
+            ClientHitSize = hitSize,
+            Normal        = rayResult.Normal,
+            Material      = rayResult.Material}}, spread)
+end
+
+local firing = false
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed or not isToggled then return end
+    if input.KeyCode ~= cfg.FireKey then return end
+    firing = true
+    while firing and isToggled do
+        local target = getClosestHeadInFOV()
+        if target then
+            fireTargetedShot(target)
+        end
+        task.wait(0.01)
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.KeyCode == cfg.FireKey then
+        firing = false
+    end
+end)
+
+local function CreateBeam(att1, targetPart, name, color)
+    if not att1 or not targetPart or not targetPart:IsA("BasePart") then return end
+    local beam = targetPart:FindFirstChild(name)
+    if not beam then
+        beam = Instance.new("Beam")
+        beam.Name = name
+        beam.FaceCamera = true
+        beam.Width0, beam.Width1 = 0.1, 0.1
+        local att2 = targetPart:FindFirstChild(name .. "Attachment")
+        if not att2 then
+            att2 = Instance.new("Attachment")
+            att2.Name = name .. "Attachment"
+            att2.Parent = targetPart
+        end
+        beam.Attachment1 = att2
+        beam.Parent = targetPart
+    end
+    beam.Attachment0 = att1
+    beam.Color = ColorSequence.new(color)
+end
+
+local function ClearBeams(name)
+    for _, obj in ipairs(Workspace:GetDescendants()) do
+        if obj:IsA("Beam") and obj.Name == name then obj:Destroy() end
+    end
+end
+
+local function GetTargetPart(obj)
+    if not obj then return nil end
+    if obj:IsA("BasePart") then return obj end
+    if obj:IsA("Model") then
+        return obj.PrimaryPart or obj:FindFirstChildWhichIsA("BasePart", true)
+    end
+    return obj:FindFirstChildWhichIsA("BasePart", true)
+end
+
+local function GetTargetPosition(obj)
+    if obj:IsA("BasePart") then return obj.Position end
+    if obj:IsA("Model") then return obj:GetPivot().Position end
+end
+
+task.spawn(function()
+    while getgenv().imRunning and task.wait(0.1) do
+        local lpRoot = getroot()
+        local att1 = lpRoot and lpRoot:FindFirstChild("TracerAttachment")
+        if lpRoot and not att1 then
+            att1 = Instance.new("Attachment")
+            att1.Name = "TracerAttachment"
+            att1.Parent = lpRoot
+        end
+
+        for _, p in ipairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local char = p.Character
+                local hrp = char.HumanoidRootPart
+                local role = GetPlayerRole(p)
+                local color = RoleColors[role] or Color3.new(1, 1, 1)
+                local highlight = char:FindFirstChild("RoleHighlight")
+
+                if Toggles.RoleESP then
+                    if not highlight then
+                        highlight = Instance.new("Highlight")
+                        highlight.Name = "RoleHighlight"
+                        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                        highlight.Parent = char
+                    end
+                    highlight.FillColor, highlight.OutlineColor = color, color
+                elseif highlight then
+                    highlight:Destroy()
+                end
+
+                if Toggles.RoleTracer and att1 and (SelectedTracerRole == "All" or role == SelectedTracerRole) then
+                    CreateBeam(att1, hrp, "RoleTracerBeam", color)
+                else
+                    local beam = hrp:FindFirstChild("RoleTracerBeam")
+                    if beam then beam:Destroy() end
+                end
+            end
+        end
+
+        if Toggles.CameraLoop then
+            LocalPlayer.CameraMaxZoomDistance = 999
+        end
+
+        local debris = Workspace:FindFirstChild("Debris")
+        local eccense = debris and debris:FindFirstChild("Eccense")
+        if eccense and att1 then
+            local gunPart = GetTargetPart(eccense)
+            if Toggles.GunESP and gunPart then
+                CreateBeam(att1, gunPart, "GunBeam", Color3.fromRGB(255, 255, 0))
+            elseif gunPart then
+                local beam = gunPart:FindFirstChild("GunBeam")
+                if beam then beam:Destroy() end
+            end
+        elseif not Toggles.GunESP then
+            ClearBeams("GunBeam")
+        end
+
+        local area = Workspace:FindFirstChild("Area")
+        local map = area and area:GetChildren()[1]
+        if map then
+            local cluesFolder = map:FindFirstChild("CluesFolder")
+            if cluesFolder then
+                for _, highlight in ipairs(cluesFolder:GetDescendants()) do
+                    if highlight:IsA("Highlight") then
+                        local target = highlight.Parent
+                        local targetPart = GetTargetPart(target)
+                        local prox = target:IsA("BasePart") and target:FindFirstChildOfClass("ProximityPrompt")
+                        if Toggles.ClueESP and att1 and targetPart then
+                            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                            CreateBeam(att1, targetPart, "ClueTrackingBeam", Color3.fromRGB(255, 0, 255))
+                        else
+                            if targetPart then
+                                local beam = targetPart:FindFirstChild("ClueTrackingBeam")
+                                if beam then beam:Destroy() end
+                            end
+                            highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+                        end
+                    end
+                end
+            end
+        end
+
+        if Toggles.NoCooldown then
+            for _, prox in ipairs(Workspace:GetDescendants()) do
+                if prox:IsA("ProximityPrompt") then prox.HoldDuration = 0 end
+            end
+        end
+    end
+
+    ClearBeams("RoleTracerBeam")
+    ClearBeams("ClueTrackingBeam")
+    ClearBeams("GunBeam")
+
+    for _, obj in ipairs(Workspace:GetDescendants()) do
+        if obj.Name == "RoleHighlight" then obj:Destroy() end
+    end
+end)
+
+MainTab:CreateLabel("cool stuff")
+
+MainTab:CreateButton({
+    Name = "Pick Up Gun",
+    Callback = function()
+        local debris = Workspace:FindFirstChild("Debris")
+        local eccense = debris and debris:FindFirstChild("Eccense")
+        local hrp = getroot()
+        if eccense and hrp then
+                eccense.CFrame = hrp.CFrame
+            end
+        end
+})
+
+MainTab:CreateButton({
+    Name = "TP To Closest Clue",
+    Callback = function()
+        local root = getroot()
+        if not root then return end
+
+        local target, dist = nil, math.huge
+        local area = Workspace:FindFirstChild("Area")
+        local map = area and area:GetChildren()[1]
+
+        if map and map:FindFirstChild("CluesFolder") then
+            for _, v in ipairs(map.CluesFolder:GetDescendants()) do
+                if v:IsA("Highlight") and v.Parent then
+                    local pos = GetTargetPosition(v.Parent)
+                    if pos then
+                        local d = (pos - root.Position).Magnitude
+                        if d < dist then
+                            target, dist = v.Parent, d
+                        end
+                    end
+                end
+            end
+        end
+
+        if target then
+            if target:IsA("BasePart") then
+                root.CFrame = target.CFrame + Vector3.new(0,2,1)
+            elseif target:IsA("Model") then
+                root.CFrame = target:GetPivot() + Vector3.new(0,2,1)
+            end
+        end
+    end
+})
+
+MainTab:CreateToggle({
+    Name = "No Prompt Cooldowns",
+    Default = false,
+    Callback = function(state)
+        Toggles.NoCooldown = state
+    end
+})
+
+MainTab:CreateToggle({
+    Name = "Enable Silent Aim (PRESS F)",
+    Default = false,
+    Callback = function(state)
+        setToggled(state)
+    end
+})
+
+MainTab:CreateToggle({
+    Name = "Enable Murder Check (Sheriff)",
+    Default = false,
+    Callback = function(state)
+        Toggles.MurderCheck = state
+    end
+})
+
+EspTab:CreateLabel("People ESP")
+
+EspTab:CreateToggle({
+    Name = "Role ESP",
+    Default = false,
+    Callback = function(state)
+        Toggles.RoleESP = state
+        if not state then
+            for _, obj in ipairs(Workspace:GetDescendants()) do
+                if obj.Name == "RoleHighlight" then obj:Destroy() end
+            end
+        end
+    end
+})
+
+EspTab:CreateToggle({
+    Name = "Role Tracer",
+    Default = false,
+    Callback = function(state)
+        Toggles.RoleTracer = state
+        if not state then ClearBeams("RoleTracerBeam") end
+    end
+})
+
+EspTab:CreateDropdown({
+    Name = "Tracer Role",
+    Options = {"murder", "sheriff", "watchdog", "innocent", "All"},
+    Multi = false,
+    Callback = function(selected)
+        SelectedTracerRole = selected
+    end
+})
+
+EspTab:CreateLabel("Items ESP")
+
+EspTab:CreateToggle({
+    Name = "Gun ESP",
+    Default = false,
+    Callback = function(state)
+        Toggles.GunESP = state
+        if not state then ClearBeams("GunBeam") end
+    end
+})
+
+EspTab:CreateToggle({
+    Name = "Clue ESP",
+    Default = false,
+    Callback = function(state)
+        Toggles.ClueESP = state
+        if not state then
+            ClearBeams("ClueTrackingBeam")
+            local area = Workspace:FindFirstChild("Area")
+            local map = area and area:GetChildren()[1]
+            local cluesFolder = map and map:FindFirstChild("CluesFolder")
+            if cluesFolder then
+                for _, highlight in ipairs(cluesFolder:GetDescendants()) do
+                    if highlight:IsA("Highlight") then
+                        highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+                    end
+                end
+            end
+        end
+    end
+})
+
+MiscTab:CreateButton({
+    Name = "No Fog",
+    Callback = function()
+        Lighting.FogEnd = 999999
+    end
+})
+
+MiscTab:CreateToggle({
+    Name = "Unlock Camera Zoom",
+    Default = false,
+    Callback = function(state)
+        Toggles.CameraLoop = state
+        if not state then
+            LocalPlayer.CameraMaxZoomDistance = defZoom
+        end
+    end
+})
+
+MiscTab:CreateToggle({
+    Name = "Show Chat",
+    Default = false,
+    Callback = function(state)
+        if state then
+            TextChatService.ChatWindowConfiguration.Enabled = true
+            if chatConnection then chatConnection:Disconnect() end
+            chatConnection = TextChatService.ChatWindowConfiguration.Changed:Connect(function()
+                if not TextChatService.ChatWindowConfiguration.Enabled then
+                    TextChatService.ChatWindowConfiguration.Enabled = true
+                end
+            end)
+        else
+            if chatConnection then
+                chatConnection:Disconnect()
+                chatConnection = nil
+            end
+               TextChatService.ChatWindowConfiguration.Enabled = false
+        end
+    end
+})
+
+Library:Notify({Title = "// epic ia hax", Content = "succesfully haxxored", Duration = 3})
+Library:Notify({Title="// abcdefghijklmnop", Content ="skill issue diagnosed",Duration=4})
+-- 662 lines long
