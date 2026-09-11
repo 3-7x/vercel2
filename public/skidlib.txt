@@ -29,7 +29,7 @@ local Theme = {
 	Accent     = Color3.fromRGB(100, 160, 255),
 }
 
-local BUILDER_ICONS = "rbxasset://LuaPackages/Packages/_Index/BuilderIcons/BuilderIcons/BuilderIcons.json"
+local BUILDER_ICONS = "rbxasset://fonts/families/BuilderIcons-Filled.json"
 local FONT_TITLE = Font.new("rbxasset://fonts/families/Jura.json", Enum.FontWeight.Bold)
 local FONT_MAIN  = Font.new("rbxasset://fonts/families/Jura.json", Enum.FontWeight.Medium)
 
