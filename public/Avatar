@@ -47,4 +47,4 @@ local function A(u)
  r:Destroy()
 end
 
-A("1954real")
+return A
