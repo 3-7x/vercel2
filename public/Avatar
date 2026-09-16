@@ -1,0 +1,50 @@
+f=
+`I Think Supports R6 and R15`
+
+local P=game:GetService("Players");local p=P.LocalPlayer
+local function A(u)
+ local c=p.Character or p.CharacterAdded:Wait();local h=c:WaitForChild("Humanoid")
+ local d=P:GetHumanoidDescriptionFromUserIdAsync(P:GetUserIdFromNameAsync(u))
+ local r=P:CreateHumanoidModelFromDescriptionAsync(d,Enum.HumanoidRigType.R6)
+
+ for _,v in ipairs(c:GetChildren())do
+  if v:IsA("Accessory")or v:IsA("Shirt")or v:IsA("Pants")or v:IsA("ShirtGraphic")or v:IsA("BodyColors")or v:IsA("CharacterMesh")then v:Destroy()end
+ end
+
+ local bp={Head=c:FindFirstChild("Head"),Torso=c:FindFirstChild("Torso"),["Left Arm"]=c:FindFirstChild("Left Arm"),["Right Arm"]=c:FindFirstChild("Right Arm"),["Left Leg"]=c:FindFirstChild("Left Leg"),["Right Leg"]=c:FindFirstChild("Right Leg")}
+
+ for _,v in ipairs(r:GetChildren())do
+  if v:IsA("Accessory")then
+   local a=v:Clone();local x=a:FindFirstChild("Handle")
+   if x then
+    x.Anchored=false;x.CanCollide=false;x.CanTouch=false;x.CanQuery=false;x.Massless=true
+    local at=x:FindFirstChildWhichIsA("Attachment");local b=at and c:FindFirstChild(at.Name,true)
+    local part=b and b.Parent:IsA("BasePart") and b.Parent or bp.Head or bp.Torso
+    if b and b.Parent:IsA("BasePart")then x.CFrame=b.WorldCFrame*at.CFrame:Inverse() elseif at then x.CFrame=part.CFrame*CFrame.new(at.Position)else x.CFrame=part.CFrame end
+    local w=Instance.new("WeldConstraint",x);w.Part0=x;w.Part1=part
+    for _,q in ipairs(a:GetDescendants())do
+     if q:IsA("BasePart")and q~=x then q.CanCollide=false;q.CanTouch=false;q.CanQuery=false;q.Massless=true;local z=Instance.new("WeldConstraint",q);z.Part0=q;z.Part1=x end
+    end
+    a.Parent=c
+   end
+  elseif v:IsA("Shirt")or v:IsA("Pants")or v:IsA("ShirtGraphic")or v:IsA("BodyColors")or v:IsA("CharacterMesh")then v:Clone().Parent=c
+  end
+ end
+
+ for _,n in ipairs({"Head","Torso","Left Arm","Right Arm","Left Leg","Right Leg"})do
+  local a,b=r:FindFirstChild(n),c:FindFirstChild(n)
+  if a and b then b.Color=a.Color;b.Material=a.Material end
+ end
+
+ local th,mh=r:FindFirstChild("Head"),c:FindFirstChild("Head")
+ if th and mh then
+  for _,v in ipairs(mh:GetChildren())do if v:IsA("SpecialMesh")or v:IsA("Mesh")then v:Destroy()end end
+  for _,v in ipairs(th:GetChildren())do if v:IsA("SpecialMesh")or v:IsA("Mesh")then v:Clone().Parent=mh end end
+  local f=th:FindFirstChild("face");local of=mh:FindFirstChild("face")
+  if f then if of then of.Texture=f.Texture else f:Clone().Parent=mh end end
+ end
+
+ r:Destroy()
+end
+
+A("1954real")
