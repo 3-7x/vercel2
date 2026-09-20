@@ -330,109 +330,109 @@ G2L["1f"]["CornerRadius"] = UDim.new(0, 999);
 -- StarterGui.._1954.F
 local function C_2()
 local script = G2L["2"];
-	local LocalPlayer = game:GetService("Players").LocalPlayer
-	local PGui = LocalPlayer:WaitForChild("PlayerGui",4)
-	local Holder = PGui:WaitForChild("._1954",3).Holder
-	local SCRIPTZ = Holder["ScrollingFrame"]
-	local CloseButton = Holder["CloseBT"]
-	local Execute = Holder["Execute"]
-	local Clear = Holder["Clear"]
-	local Rejoin = Holder["Rejoin"]
-	local Reset = Holder["ResetChar"]
-	local CodeArea = Holder["CODE_AREA"]
-	
-	function notloadstr(url)
-		loadstring(game:HttpGet("https://"..url))()
-	end
-	
-	local listLayout = SCRIPTZ:FindFirstChildOfClass("UIListLayout")
-	if listLayout then
-		local function updateCanvas()
-			SCRIPTZ.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 4)
-		end
-		listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
-		task.defer(updateCanvas)
-	end
+  local LocalPlayer = game:GetService("Players").LocalPlayer
+  local PGui = LocalPlayer:WaitForChild("PlayerGui",4)
+  local Holder = PGui:WaitForChild("._1954",3).Holder
+  local SCRIPTZ = Holder["ScrollingFrame"]
+  local CloseButton = Holder["CloseBT"]
+  local Execute = Holder["Execute"]
+  local Clear = Holder["Clear"]
+  local Rejoin = Holder["Rejoin"]
+  local Reset = Holder["ResetChar"]
+  local CodeArea = Holder["CODE_AREA"]
+  
+  function notloadstr(url)
+    loadstring(game:HttpGet("https://"..url))()
+  end
+  
+  local listLayout = SCRIPTZ:FindFirstChildOfClass("UIListLayout")
+  if listLayout then
+    local function updateCanvas()
+      SCRIPTZ.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 4)
+    end
+    listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+    task.defer(updateCanvas)
+  end
 
-	local user_title = Holder["Title/User"]
-	local user_icon = Holder["UserIcon"]
-	
-	user_title.Text = LocalPlayer.Name.." || ._1954 hub :)"
-	
-	local image, isReady = game:GetService("Players"):GetUserThumbnailAsync(
-		LocalPlayer.UserId,
-		Enum.ThumbnailType.HeadShot,
-		Enum.ThumbnailSize.Size420x420
-	)
-	
-	user_icon.Image = image
-	
-	CloseButton.Activated:Connect(function()
-		--[[]] PGui:WaitForChild("._1954",3):Destroy()
-		--[[   ]] end)
-	
-	Execute.Activated:Connect(function()
-		--[[]] loadstring(CodeArea.Text)()
-		--[[   ]] end)
-	
-	Clear.Activated:Connect(function()
-		--[[]] CodeArea.Text = ''
-		--[[   ]] end)
-	
-	Rejoin.Activated:Connect(function()
-		--[[]] notloadstr("x.gd/Rejoin")
-		--[[   ]] end)
-	
-	Reset.Activated:Connect(function()
-		--[[]] LocalPlayer.Character:WaitForChild("Humanoid").Health = 0
-		--[[   ]] end)
-	
-	SCRIPTZ["OpenViz"].Activated:Connect(function()
-		notloadstr("x.gd/LoadOV") end)
-	
-	SCRIPTZ["MegaHack"].Activated:Connect(function()
-		notloadstr("x.gd/____MH") end)
-	
-	SCRIPTZ["7YD7"].Activated:Connect(function()
-		notloadstr("x.gd/__7YD7") end)
+  local user_title = Holder["Title/User"]
+  local user_icon = Holder["UserIcon"]
+  
+  user_title.Text = LocalPlayer.Name.." || ._1954 hub :)"
+  
+  local image, isReady = game:GetService("Players"):GetUserThumbnailAsync(
+    LocalPlayer.UserId,
+    Enum.ThumbnailType.HeadShot,
+    Enum.ThumbnailSize.Size420x420
+  )
+  
+  user_icon.Image = image
+  
+  CloseButton.Activated:Connect(function()
+    --[[]] PGui:WaitForChild("._1954",3):Destroy()
+    --[[   ]] end)
+  
+  Execute.Activated:Connect(function()
+    --[[]] loadstring(CodeArea.Text)()
+    --[[   ]] end)
+  
+  Clear.Activated:Connect(function()
+    --[[]] CodeArea.Text = ''
+    --[[   ]] end)
+  
+  Rejoin.Activated:Connect(function()
+    --[[]] notloadstr("x.gd/Rejoin")
+    --[[   ]] end)
+  
+  Reset.Activated:Connect(function()
+    --[[]] LocalPlayer.Character:WaitForChild("Humanoid").Health = 0
+    --[[   ]] end)
+  
+  SCRIPTZ["OpenViz"].Activated:Connect(function()
+    notloadstr("x.gd/LoadOV") end)
+  
+  SCRIPTZ["MegaHack"].Activated:Connect(function()
+    notloadstr("x.gd/____MH") end)
+  
+  SCRIPTZ["7YD7"].Activated:Connect(function()
+    notloadstr("x.gd/__7YD7") end)
 
-	-- MegaHack buttons not already present in the converted GUI.
-	-- They are created at runtime by cloning the existing GUI2LUA button,
-	-- so their styling stays identical to the converted buttons.
-	local function addMegaHackButton(name, url)
-		if SCRIPTZ:FindFirstChild(name) then
-			return
-		end
+  local function addMegaHackButton(name, url)
+    if SCRIPTZ:FindFirstChild(name) then
+      return
+    end
 
-		local template = SCRIPTZ:FindFirstChild("OpenViz")
-		if not template then
-			return
-		end
+    local template = SCRIPTZ:FindFirstChild("OpenViz")
+    if not template then
+      return
+    end
 
-		local button = template:Clone()
-		button.Name = name
-		button.Text = name .. ".lua"
-		button.Parent = SCRIPTZ
+    local button = template:Clone()
+    button.Name = name
+    button.Text = name .. ".lua"
+    button.Parent = SCRIPTZ
 
-		button.Activated:Connect(function()
-			notloadstr(url)
-		end)
-	end
+    button.Activated:Connect(function()
+      notloadstr(url)
+    end)
+  end
 
-	addMegaHackButton("Infy", "pastefy.app/agqWszw5/raw")
-	addMegaHackButton("Cobalt", "github.com/notpoiu/cobalt/releases/latest/download/Cobalt.luau")
-	addMegaHackButton("Ketamine", "raw.githubusercontent.com/InfernusScripts/Ketamine/refs/heads/main/Ketamine.lua")
-	addMegaHackButton("Dex", "raw.githubusercontent.com/infyiff/backup/main/dex.lua")
-        addMegaHackButton("ConsCopy", "rawz.vercel.app/Console%20Copy")
-	addMegaHackButton("ProFake", "pastefy.app/yVlxzwk8/raw")
-	addMegaHackButton("F.E.R", "pastefy.app/XVeMdVfN/raw")
-	addMegaHackButton("Fly", "pastefy.app/fDIbTKHX/raw")
-	addMegaHackButton("S/kill", "pastefy.app/S0kqeeoa/raw")
-	addMegaHackButton("NoProxC", "pastefy.app/5ArRAJgZ/raw")
-	
-	while true and Holder["Epic_face"] do
-		Holder["Epic_face"].Rotation += 1.3
-		task.wait() end
+  addMegaHackButton("Infy", "pastefy.app/agqWszw5/raw")
+  addMegaHackButton("Cobalt", "gitlab.com/upio/cobalt/-/releases/permalink/latest/downloads/Cobalt.luau")
+  addMegaHackButton("Ketamine", "raw.githubusercontent.com/InfernusScripts/Ketamine/refs/heads/main/Ketamine.lua")
+  addMegaHackButton("Dex", "raw.githubusercontent.com/infyiff/backup/main/dex.lua")
+  addMegaHackButton("ConsCopy", "rawz.vercel.app/Console%20Copy")
+  addMegaHackButton("ProFake", "pastefy.app/yVlxzwk8/raw")
+  addMegaHackButton("Purchase", "raw.githubusercontent.com/7yd7/FreeGamepass/main/Script.luau")
+  addMegaHackButton("Remote", "pastefy.app/XVeMdVfN/raw")
+  addMegaHackButton("Fly", "pastefy.app/fDIbTKHX/raw")
+  addMegaHackButton("S/kill", "pastefy.app/S0kqeeoa/raw")
+  addMegaHackButton("NoProx", "pastefy.app/5ArRAJgZ/raw")
+  addMegaHackButton("TPPOS", "pastefy.app/9N8TIL9l/raw")
+  addMegaHackButton("Hyperlaser", "pastefy.app/WmDn4kBU/raw")
+  
+  while true and Holder["Epic_face"] do
+    Holder["Epic_face"].Rotation += 1.3
+    task.wait() end
 end;
 task.spawn(C_2);
 
