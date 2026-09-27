@@ -92,20 +92,6 @@ G2L["a"] = Instance.new("UICorner", G2L["9"]);
 G2L["a"]["CornerRadius"] = UDim.new(0, 3);
 
 
--- StarterGui.._1954.Holder.ScrollingFrame.MegaHack
-G2L["b"] = Instance.new("TextButton", G2L["7"]);
-G2L["b"]["BorderSizePixel"] = 0;
-G2L["b"]["TextSize"] = 14;
-G2L["b"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-G2L["b"]["BackgroundColor3"] = Color3.fromRGB(53, 53, 53);
-G2L["b"]["FontFace"] = Font.new([[rbxasset://fonts/families/ComicNeueAngular.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-G2L["b"]["Size"] = UDim2.new(0, 94, 0, 25);
-G2L["b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-G2L["b"]["Text"] = [[MegaHack.lua]];
-G2L["b"]["Name"] = [[MegaHack]];
-G2L["b"]["Position"] = UDim2.new(0.04124, 0, 0, 0);
-
-
 -- StarterGui.._1954.Holder.ScrollingFrame.MegaHack.UICorner
 G2L["c"] = Instance.new("UICorner", G2L["b"]);
 G2L["c"]["CornerRadius"] = UDim.new(0, 3);
@@ -389,9 +375,6 @@ local script = G2L["2"];
   
   SCRIPTZ["OpenViz"].Activated:Connect(function()
     notloadstr("x.gd/LoadOV") end)
-  
-  SCRIPTZ["MegaHack"].Activated:Connect(function()
-    notloadstr("x.gd/____MH") end)
   
   SCRIPTZ["7YD7"].Activated:Connect(function()
     notloadstr("x.gd/__7YD7") end)
