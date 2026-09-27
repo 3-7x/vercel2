@@ -417,6 +417,7 @@ local script = G2L["2"];
   end
 
   addMegaHackButton("Infy", "pastefy.app/agqWszw5/raw")
+  addMegaHackButton("Avatar-Z", "rawz.vercel.app/Avatar-z")
   addMegaHackButton("Cobalt", "gitlab.com/upio/cobalt/-/releases/permalink/latest/downloads/Cobalt.luau")
   addMegaHackButton("Ketamine", "raw.githubusercontent.com/InfernusScripts/Ketamine/refs/heads/main/Ketamine.lua")
   addMegaHackButton("Dex", "raw.githubusercontent.com/infyiff/backup/main/dex.lua")
