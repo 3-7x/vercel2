@@ -1,4 +1,4 @@
-local MAX_DEPTH = 3
+local MAX_DEPTH = 2
 local EXTENSIONS = { mp3 = true, ogg = true, wav = true }
 local BASE = "iamosulazer"
 local ICONS = BASE .. "/icons"
@@ -16,7 +16,8 @@ local ICON_FILES = {
     next = { ICONS .. "/next.png", "https://raw.githubusercontent.com/3-7x/CoolOsuThing/refs/heads/main/next.png" },
     record = { ICONS .. "/record.png", "https://raw.githubusercontent.com/3-7x/CoolOsuThing/refs/heads/main/disc.png" },
     --settings = { ICONS .. "/settings.png", "https://raw.githubusercontent.com/3-7x/CoolOsuThing/refs/heads/main/gear.png" },
-    --playlist = { ICONS .. "/playlist.png", "https://raw.githubusercontent.com/3-7x/CoolOsuThing/refs/heads/main/note.png" }
+    --playlist = { ICONS .. "/playlist.png", "https://raw.githubusercontent.com/3-7x/CoolOsuThing/refs/heads/main/note.png" },
+    -- these were ugly anyway
 }
 
 local function mkdir(p)
@@ -1089,7 +1090,6 @@ do
         hideBtn.label.Text = "press a key"
     end, 11)
     Settings.button("Unload UI", unload)
-    Settings.button("Change UI", function() end)
     Settings.snap()
     State.rainbow = Cfg.rainbow
     State.mode = Cfg.mode
