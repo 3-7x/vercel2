@@ -353,7 +353,7 @@ local btnW, btnH = Ri2 - GAP / 2, Ri2 - D2
 local function icon(parent, key, glyph, size, box)
     local t = make("TextLabel", parent, {
         AnchorPoint = Vector2.new(.5, .5), Size = UDim2.fromOffset(box or size + 8, box or size + 8), BackgroundTransparency = 1,
-        TextColor3 = TEXT_IDLE, Font = Enum.Font.GothamBold, TextSize = size,
+        TextColor3 = TEXT_IDLE, Font = Enum.Font.BuilderSans, TextSize = size,
     })
     local img = make("ImageLabel", t, {
         AnchorPoint = Vector2.new(.5, .5), Position = UDim2.fromScale(.5, .5),
@@ -461,7 +461,7 @@ local function newList()
         local scale = make("UIScale", b)
         local label = make("TextLabel", b, {
             AnchorPoint = Vector2.new(0, .5), Position = UDim2.new(0, indent, .5, 0), Size = UDim2.new(1, -(indent + 26), 0, h),
-            BackgroundTransparency = 1, Text = text, TextColor3 = color or TEXT_IDLE, Font = Enum.Font.GothamMedium,
+            BackgroundTransparency = 1, Text = text, TextColor3 = color or TEXT_IDLE, Font = Enum.Font.BuilderSans,
             TextSize = ts or 13, TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd,
         })
         local e = {
@@ -527,7 +527,7 @@ local function newList()
         local box = make("TextBox", e.frame, {
             AnchorPoint = Vector2.new(1, .5), Position = UDim2.new(1, -8, .5, 0), Size = UDim2.fromOffset(46, 18),
             BackgroundColor3 = Color3.fromRGB(12, 12, 18), BorderSizePixel = 0, Text = e.last, TextColor3 = TEXT_HOVER,
-            PlaceholderText = "0-10", Font = Enum.Font.GothamMedium, TextSize = 11, ClearTextOnFocus = false,
+            PlaceholderText = "0-10", Font = Enum.Font.BuilderSans, TextSize = 11, ClearTextOnFocus = false,
         })
         make("UICorner", box, { CornerRadius = UDim.new(0, 6) })
         connect(box.FocusLost, function()
@@ -552,7 +552,7 @@ local function newList()
     function L.header(text)
         local e = L.add("header", text, 18, 0, 10, ACCENT_B)
         e.flat = true
-        e.label.Font = Enum.Font.GothamBold
+        e.label.Font = Enum.Font.BuilderSans
         e.label.TextXAlignment = Enum.TextXAlignment.Center
         e.label.Position = UDim2.new(0, 0, .5, 0)
         e.label.Size = UDim2.new(1, 0, 0, 18)
@@ -571,7 +571,7 @@ local function newList()
         local h = L.add("dropdown", text, MAIN_H, 12, 11)
         h.arrow = make("TextLabel", h.frame, {
             AnchorPoint = Vector2.new(1, .5), Position = UDim2.new(1, -10, .5, 0), Size = UDim2.fromOffset(14, 14),
-            BackgroundTransparency = 1, Text = "▼", TextColor3 = TEXT_IDLE, Font = Enum.Font.GothamBold, TextSize = 9,
+            BackgroundTransparency = 1, Text = "▼", TextColor3 = TEXT_IDLE, Font = Enum.Font.BuilderSans, TextSize = 9,
         })
         h.arrowRot, h.arrowT, h.open, h.options = 0, 0, false, {}
         for i, name in opts do
@@ -796,7 +796,7 @@ local Cluster = make("Frame", Controls, { Name = "Cluster", Size = UDim2.fromSca
 local TimeLabel = make("TextLabel", Cluster, {
     Name = "Time", AnchorPoint = Vector2.new(.5, .5), Position = UDim2.fromOffset(180, 245), Size = UDim2.fromOffset(64, 8),
     BackgroundTransparency = 1, Text = "0:00 / 0:00", TextColor3 = Color3.fromRGB(205, 210, 230), TextTransparency = .2,
-    TextStrokeTransparency = .6, Font = Enum.Font.GothamMedium, TextSize = 8,
+    TextStrokeTransparency = .6, Font = Enum.Font.BuilderSans, TextSize = 8,
 })
 
 local function ctrl(dx, dy, size, key, glyph, gsize, cb)
@@ -842,14 +842,14 @@ local NameFrame = make("Frame", Holder, {
 })
 local NameLabel = make("TextLabel", NameFrame, {
     Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, Text = "", TextTransparency = 1,
-    TextColor3 = Color3.fromRGB(205, 210, 230), Font = Enum.Font.GothamMedium, TextSize = 12,
+    TextColor3 = Color3.fromRGB(205, 210, 230), Font = Enum.Font.BuilderSans, TextSize = 12,
 })
 local nameToken = 0
 
 local function setName(str, dim)
     nameToken += 1
     local my = nameToken
-    local function w(t) return TXT:GetTextSize(t, 12, Enum.Font.GothamMedium, Vector2.new(1e5, 20)).X end
+    local function w(t) return TXT:GetTextSize(t, 12, Enum.Font.BuilderSans, Vector2.new(1e5, 20)).X end
     NameLabel.Text = str
     if w(str) <= NAME_W then
         tween(NameLabel, .25, { TextTransparency = dim or .1 })
@@ -1171,9 +1171,9 @@ local function lbl(text, y, w, h, size, font, color, tr)
 end
 
 local infoText = #songs == 0 and "no songs found" or (#songs .. (#songs == 1 and " song" or " songs") .. " found!")
-lbl(infoText, .3, 120, 16, 12, Enum.Font.GothamMedium, Color3.fromRGB(165, 178, 208))
-lbl("thanks for using this script!", .5, 112, 34, 13, Enum.Font.GothamBold, Color3.fromRGB(160, 120, 255))
-local preText = lbl("preloading songs", .72, 120, 12, 10, Enum.Font.Gotham, Color3.fromRGB(150, 150, 178), .45)
+lbl(infoText, .3, 120, 16, 12, Enum.Font.BuilderSans, Color3.fromRGB(165, 178, 208))
+lbl("Thank you for using this script!", .5, 112, 34, 13, Enum.Font.BuilderSans, Color3.fromRGB(160, 120, 255))
+local preText = lbl("preloading songs..", .72, 120, 12, 10, Enum.Font.BuilderSans, Color3.fromRGB(150, 150, 178), .45)
 local track = make("Frame", Card, {
     AnchorPoint = Vector2.new(.5, .5), Position = UDim2.fromScale(.5, .8), Size = UDim2.fromOffset(56, 3),
     BackgroundColor3 = Color3.fromRGB(40, 40, 62), BorderSizePixel = 0, ZIndex = 21,
