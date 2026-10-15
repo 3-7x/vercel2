@@ -4756,30 +4756,46 @@ vars.toggleLocalTryOn = function()	if vars.localTryOnBuilding then return end
 	end
 end
 
-vars.bindCharacterLifecycle = function(character)	vars.disconnectConnection(vars.deathConnection)
+vars.bindCharacterLifecycle = function(character)
+	vars.disconnectConnection(vars.deathConnection)
 	vars.deathConnection = nil
-
 	if not character then return end
 
 	task.spawn(function()
 		local humanoid = character:WaitForChild("Humanoid", 10)
 		local root = character:WaitForChild("HumanoidRootPart", 10)
-
 		if not humanoid or not root or not vars.scriptAlive then return end
 
 		vars.deathConnection = humanoid.Died:Connect(function()
-			if vars.tryOnActive or vars.localTryOnModel or vars.localTryOnBuilding then
+			if vars.tryOnActive or vars.localTryOnModel or vars.localTryOnBuilding or vars.placeholderR6Active or vars.placeholderR6Backup then
+				-- Tear down all visuals attached to the dying character immediately.
 				vars.stopLocalTryOn(true)
+				vars.destroyOrphanedLocalTryOnModels(nil)
 				vars.WearButton.Active = false
 				vars.updateWearButtonState()
-				vars.Status.Text = "[...] Character died. Respawning try-on..."
+				vars.Status.Text = "[...] Character died. Reapplying avatar after respawn..."
 			end
 		end)
 
+		local function applyToThisCharacter()
+			if not vars.scriptAlive or vars.LocalPlayer.Character ~= character then return end
+			if not vars.tryOnActive or not vars.ui.selectedAvatar then return end
+			vars.tryOnSelectedAvatarLocally()
+		end
+
 		if vars.tryOnActive and vars.ui.selectedAvatar and vars.scriptAlive then
 			task.wait(0.15)
-			if vars.scriptAlive and vars.LocalPlayer.Character == character then
-				vars.tryOnSelectedAvatarLocally()
+			applyToThisCharacter()
+
+			if vars.placeholderMode and humanoid.RigType == Enum.HumanoidRigType.R6 then
+				for _, delaySeconds in ipairs({0.45, 1.0, 2.0}) do
+					task.delay(delaySeconds, function()
+						if not vars.scriptAlive or vars.LocalPlayer.Character ~= character then return end
+						if not vars.placeholderMode or not vars.tryOnActive or not vars.ui.selectedAvatar then return end
+						if vars.placeholderR6Building then return end
+					applyToThisCharacter()
+					end)
+				end
 			end
 		else
 			vars.WearButton.Active = true
