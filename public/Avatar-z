@@ -47,7 +47,7 @@ vars.SETTINGS_FILE_PATH = vars.FOLDER_NAME .. "/Settings.json"
 vars.DEFAULT_SETTINGS = {
 	autoLoadAvatar = false,
 	hideBind = "RightShift",
-	theme = "Obsidian",
+	theme = "Original",
 	showUIOnExecution = true,
 	lastAvatar = nil,
 	lastMethod = "normal"
@@ -83,7 +83,7 @@ vars.loadSettings = function()
 	if type(vars.settings.autoLoadAvatar) ~= "boolean" then vars.settings.autoLoadAvatar = false end
 	if type(vars.settings.showUIOnExecution) ~= "boolean" then vars.settings.showUIOnExecution = true end
 	if type(vars.settings.hideBind) ~= "string" then vars.settings.hideBind = "RightShift" end
-	if type(vars.settings.theme) ~= "string" then vars.settings.theme = "Obsidian" end
+	if type(vars.settings.theme) ~= "string" then vars.settings.theme = "Original" end
 	if vars.settings.lastMethod ~= "placeholder" then vars.settings.lastMethod = "normal" end
 	return true
 end
@@ -532,9 +532,9 @@ vars.THEMES = {
 		Color3.fromRGB(174, 151, 180), Color3.fromRGB(207, 170, 218), Color3.fromRGB(185, 147, 198), Color3.fromRGB(113, 79, 125)
 	)
 }
-vars.THEME_NAMES = {"Original", "Bluish", "Forest", "Pink"}
-vars.COLORS = vars.THEMES[vars.settings.theme] or vars.THEMES.Obsidian
-vars.settings.theme = vars.THEMES[vars.settings.theme] and vars.settings.theme or "Obsidian"
+vars.THEME_NAMES = {"Original", "Bluish", "Forest", "Plum"}
+vars.COLORS = vars.THEMES[vars.settings.theme] or vars.THEMES.Original
+vars.settings.theme = vars.THEMES[vars.settings.theme] and vars.settings.theme or "Original"
 
 vars.ScreenGui = Instance.new("ScreenGui")
 vars.ScreenGui.Name = vars.SCREEN_GUI_NAME
