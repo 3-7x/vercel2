@@ -32,13 +32,62 @@ vars.CATALOG_EVENTS = vars.ReplicatedStorage:FindFirstChild("Events")
 vars.CATALOG_GUI_REMOTE = vars.CATALOG_EVENTS and vars.CATALOG_EVENTS:FindFirstChild("CatalogGuiRemote")
 vars.SAVED_OUTFITS_REMOTE = vars.CATALOG_EVENTS and vars.CATALOG_EVENTS:FindFirstChild("SavedOutfitsRemote")
 
+if not game:IsLoaded() then
+	game.Loaded:Wait()
+end
 vars.LocalPlayer = vars.Players.LocalPlayer
-if not vars.LocalPlayer then
-	error("LocalPlayer was not available.")
+while not vars.LocalPlayer do
+	task.wait()
+	vars.LocalPlayer = vars.Players.LocalPlayer
 end
 
 vars.FOLDER_NAME = "Avatar Saver v2"
-vars.FILE_PATH = vars.FOLDER_NAME .. "/SavedAvatars.json" 
+vars.FILE_PATH = vars.FOLDER_NAME .. "/SavedAvatars.json"
+vars.SETTINGS_FILE_PATH = vars.FOLDER_NAME .. "/Settings.json"
+vars.DEFAULT_SETTINGS = {
+	autoLoadAvatar = false,
+	hideBind = "RightShift",
+	theme = "Obsidian",
+	showUIOnExecution = true,
+	lastAvatar = nil,
+	lastMethod = "normal"
+}
+vars.settings = table.clone(vars.DEFAULT_SETTINGS)
+vars.saveSettings = function()
+	if type(writefile) ~= "function" then return false end
+	pcall(function()
+		if type(makefolder) == "function" then
+			if type(isfolder) == "function" then
+				if not isfolder(vars.FOLDER_NAME) then makefolder(vars.FOLDER_NAME) end
+			else
+				makefolder(vars.FOLDER_NAME)
+			end
+		end
+	end)
+	local ok = pcall(function()
+		writefile(vars.SETTINGS_FILE_PATH, vars.HttpService:JSONEncode(vars.settings))
+	end)
+	return ok
+end
+vars.loadSettings = function()
+	if type(readfile) ~= "function" then return false end
+	local ok, data = pcall(function()
+		if type(isfile) == "function" and not isfile(vars.SETTINGS_FILE_PATH) then return nil end
+		return vars.HttpService:JSONDecode(readfile(vars.SETTINGS_FILE_PATH))
+	end)
+	if not ok or type(data) ~= "table" then return false end
+	for key in pairs(vars.DEFAULT_SETTINGS) do
+		if data[key] ~= nil then vars.settings[key] = data[key] end
+	end
+	if type(data.lastAvatar) == "table" then vars.settings.lastAvatar = data.lastAvatar end
+	if type(vars.settings.autoLoadAvatar) ~= "boolean" then vars.settings.autoLoadAvatar = false end
+	if type(vars.settings.showUIOnExecution) ~= "boolean" then vars.settings.showUIOnExecution = true end
+	if type(vars.settings.hideBind) ~= "string" then vars.settings.hideBind = "RightShift" end
+	if type(vars.settings.theme) ~= "string" then vars.settings.theme = "Obsidian" end
+	if vars.settings.lastMethod ~= "placeholder" then vars.settings.lastMethod = "normal" end
+	return true
+end
+vars.loadSettings()
 vars.AVATARS_FOLDER = "Avatars"
 vars.AVATAR_FILE_PREFIX = "Avatar"
 vars.AVATAR_FILE_EXTENSION = ".ava"
@@ -450,6 +499,42 @@ vars.COLORS = {
 	Danger = Color3.fromRGB(225, 65, 80),
 	DangerHover = Color3.fromRGB(245, 82, 98),
 }
+vars.BASE_COLORS = vars.COLORS
+vars.makeTheme = function(background, surface, surface2, surface3, border, text, muted, accent, accentHover, accent2)
+	local palette = table.clone(vars.BASE_COLORS)
+	palette.Background = background
+	palette.Surface = surface
+	palette.Surface2 = surface2
+	palette.Surface3 = surface3
+	palette.Border = border
+	palette.Text = text
+	palette.Muted = muted
+	palette.Accent = accent
+	palette.AccentHover = accentHover
+	palette.Accent2 = accent2
+	return palette
+end
+vars.THEMES = {
+	Original = vars.BASE_COLORS,
+	Bluish = vars.makeTheme(
+		Color3.fromRGB(8, 11, 18), Color3.fromRGB(13, 18, 28), Color3.fromRGB(19, 26, 39),
+		Color3.fromRGB(27, 36, 52), Color3.fromRGB(51, 67, 91), Color3.fromRGB(238, 243, 252),
+		Color3.fromRGB(143, 160, 184), Color3.fromRGB(145, 174, 218), Color3.fromRGB(125, 157, 207), Color3.fromRGB(73, 99, 139)
+	),
+	Forest = vars.makeTheme(
+		Color3.fromRGB(8, 13, 11), Color3.fromRGB(13, 20, 16), Color3.fromRGB(19, 29, 23),
+		Color3.fromRGB(27, 39, 31), Color3.fromRGB(52, 72, 57), Color3.fromRGB(239, 246, 240),
+		Color3.fromRGB(145, 166, 148), Color3.fromRGB(161, 202, 169), Color3.fromRGB(137, 181, 147), Color3.fromRGB(72, 108, 80)
+	),
+	Plum = vars.makeTheme(
+		Color3.fromRGB(14, 10, 16), Color3.fromRGB(22, 15, 25), Color3.fromRGB(31, 21, 36),
+		Color3.fromRGB(42, 29, 48), Color3.fromRGB(76, 55, 84), Color3.fromRGB(247, 240, 249),
+		Color3.fromRGB(174, 151, 180), Color3.fromRGB(207, 170, 218), Color3.fromRGB(185, 147, 198), Color3.fromRGB(113, 79, 125)
+	)
+}
+vars.THEME_NAMES = {"Original", "Bluish", "Forest", "Pink"}
+vars.COLORS = vars.THEMES[vars.settings.theme] or vars.THEMES.Obsidian
+vars.settings.theme = vars.THEMES[vars.settings.theme] and vars.settings.theme or "Obsidian"
 
 vars.ScreenGui = Instance.new("ScreenGui")
 vars.ScreenGui.Name = vars.SCREEN_GUI_NAME
@@ -559,7 +644,8 @@ vars.BUILDER_ICONS = {
 	Refresh = "arrow-spin-clockwise",
 	Minimize = "two-arrows-to-center",
 	Maximize = "two-arrows-from-center",
-	Close = "x"
+	Close = "x",
+	Gear = "gear"
 }
 
 vars.createBuilderIcon = function(parent, name, code, size, color)
@@ -582,6 +668,7 @@ end
 
 vars.createButton = function(parent, name, text, baseColor, hoverColor)	local button = Instance.new("TextButton")
 	button.Name = name
+	local useThemeSurface = baseColor == nil or baseColor == vars.COLORS.Surface3
 	local normalColor = baseColor or vars.COLORS.Surface3
 	local hover = hoverColor or Color3.fromRGB(38, 45, 62)
 
@@ -601,7 +688,7 @@ vars.createButton = function(parent, name, text, baseColor, hoverColor)	local bu
 		vars.TweenService:Create(button, TweenInfo.new(0.14, Enum.EasingStyle.Quad), {BackgroundColor3 = hover}):Play()
 	end)
 	vars.wire(button.MouseLeave, function()
-		vars.TweenService:Create(button, TweenInfo.new(0.14, Enum.EasingStyle.Quad), {BackgroundColor3 = normalColor}):Play()
+		vars.TweenService:Create(button, TweenInfo.new(0.14, Enum.EasingStyle.Quad), {BackgroundColor3 = useThemeSurface and vars.COLORS.Surface3 or normalColor}):Play()
 	end)
 
 	return button
@@ -683,7 +770,7 @@ vars.HeaderShade.Parent = vars.TitleBar
 
 vars.Title = Instance.new("TextLabel")
 vars.Title.Name = "Title"
-vars.Title.Size = UDim2.new(1, -120, 1, 0)
+vars.Title.Size = UDim2.new(1, -156, 1, 0)
 vars.Title.Position = UDim2.new(0, 12, 0, 0)
 vars.Title.BackgroundTransparency = 1
 vars.Title.Text = "Avatar - Z"
@@ -699,6 +786,15 @@ vars.MinimizeButton.Size = UDim2.new(0, 28, 0, 28)
 vars.MinimizeButton.Position = UDim2.new(1, -68, 0, 8)
 vars.MinimizeButton.TextSize = 16
 vars.MinimizeButton.ZIndex = 13
+vars.SettingsButton = vars.createButton(vars.TitleBar, "Settings", "")
+vars.SettingsButton.Size = UDim2.new(0, 28, 0, 28)
+vars.SettingsButton.Position = UDim2.new(1, -102, 0, 8)
+vars.SettingsButton.TextSize = 16
+vars.SettingsButton.ZIndex = 13
+vars.SettingsIcon = vars.createBuilderIcon(vars.SettingsButton, "Icon", vars.BUILDER_ICONS.Gear, 16, vars.COLORS.Muted)
+vars.SettingsIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+vars.SettingsIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+vars.SettingsIcon.ZIndex = 14
 
 vars.MinimizeIcon = vars.createBuilderIcon(
 	vars.MinimizeButton,
@@ -1053,6 +1149,278 @@ vars.PlaceholderToggle.Selectable = true
 vars.PlaceholderToggle.Parent = vars.SaveBar
 vars.addCorner(vars.PlaceholderToggle, 6)
 vars.addStroke(vars.PlaceholderToggle, vars.COLORS.Border, 1, 0.15)
+
+vars.settingsOpen = false
+vars.settingsCapturingBind = false
+vars.settingToggleButtons = {}
+vars.themeButtons = {}
+vars.SettingsList = Instance.new("ScrollingFrame")
+vars.SettingsList.Name = "SettingsList"
+vars.SettingsList.Size = UDim2.new(1, -24, 1, -66)
+vars.SettingsList.Position = UDim2.new(0, 12, 0, 54)
+vars.SettingsList.BackgroundTransparency = 1
+vars.SettingsList.BorderSizePixel = 0
+vars.SettingsList.ScrollBarThickness = 3
+vars.SettingsList.ScrollBarImageColor3 = Color3.fromRGB(95, 95, 98)
+vars.SettingsList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+vars.SettingsList.ScrollingDirection = Enum.ScrollingDirection.Y
+vars.SettingsList.Visible = false
+vars.SettingsList.Parent = vars.Main
+vars.SettingsLayout = Instance.new("UIListLayout")
+vars.SettingsLayout.Padding = UDim.new(0, 8)
+vars.SettingsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+vars.SettingsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+vars.SettingsLayout.Parent = vars.SettingsList
+vars.SettingsPadding = Instance.new("UIPadding")
+vars.SettingsPadding.PaddingTop = UDim.new(0, 2)
+vars.SettingsPadding.PaddingBottom = UDim.new(0, 4)
+vars.SettingsPadding.Parent = vars.SettingsList
+
+vars.createSettingRow = function(name, titleText, descriptionText, height)
+	local row = Instance.new("Frame")
+	row.Name = name
+	row.Size = UDim2.new(1, -4, 0, height or 62)
+	row.BackgroundColor3 = vars.COLORS.Surface2
+	row.BorderSizePixel = 0
+	row.Parent = vars.SettingsList
+	vars.addCorner(row, 7)
+	vars.addStroke(row, vars.COLORS.Border, 1, 0.2)
+	local title = Instance.new("TextLabel")
+	title.Name = "SettingTitle"
+	title.Size = UDim2.new(1, -218, 0, 22)
+	title.Position = UDim2.new(0, 12, 0, 9)
+	title.BackgroundTransparency = 1
+	title.Text = titleText
+	title.TextColor3 = vars.COLORS.Text
+	title.TextSize = 12
+	title.FontFace = vars.uiFont(vars.UI_WEIGHT)
+	title.TextXAlignment = Enum.TextXAlignment.Left
+	title.TextTruncate = Enum.TextTruncate.AtEnd
+	title.Parent = row
+	local description = Instance.new("TextLabel")
+	description.Name = "SettingDescription"
+	description.Size = UDim2.new(1, -218, 0, 24)
+	description.Position = UDim2.new(0, 12, 0, 30)
+	description.BackgroundTransparency = 1
+	description.Text = descriptionText
+	description.TextColor3 = vars.COLORS.Muted
+	description.TextSize = 9
+	description.FontFace = vars.uiFont(Enum.FontWeight.Regular)
+	description.TextXAlignment = Enum.TextXAlignment.Left
+	description.TextYAlignment = Enum.TextYAlignment.Top
+	description.TextWrapped = true
+	description.Parent = row
+	return row
+end
+
+vars.createSettingToggle = function(parent, settingKey)
+	local button = Instance.new("TextButton")
+	button.Name = settingKey .. "Toggle"
+	button.Size = UDim2.fromOffset(44, 24)
+	button.Position = UDim2.new(1, -58, 0.5, -12)
+	button.BackgroundColor3 = vars.COLORS.Surface3
+	button.BorderSizePixel = 0
+	button.Text = ""
+	button.AutoButtonColor = false
+	button.Parent = parent
+	vars.addCorner(button, 12)
+	vars.addStroke(button, vars.COLORS.Border, 1, 0.15)
+	local knob = Instance.new("Frame")
+	knob.Name = "Knob"
+	knob.Size = UDim2.fromOffset(18, 18)
+	knob.Position = UDim2.new(0, 3, 0.5, -9)
+	knob.BackgroundColor3 = Color3.fromRGB(235, 235, 238)
+	knob.BorderSizePixel = 0
+	knob.Parent = button
+	vars.addCorner(knob, 9)
+	local function refresh()
+		local enabled = vars.settings[settingKey] == true
+		button.BackgroundColor3 = enabled and vars.COLORS.Accent2 or vars.COLORS.Surface3
+		local stroke = button:FindFirstChildOfClass("UIStroke")
+		if stroke then stroke.Color = enabled and vars.COLORS.Accent or vars.COLORS.Border end
+		knob.Position = enabled and UDim2.new(1, -21, 0.5, -9) or UDim2.new(0, 3, 0.5, -9)
+		knob.BackgroundColor3 = enabled and vars.COLORS.Text or Color3.fromRGB(190, 190, 194)
+	end
+	vars.wire(button.Activated, function()
+		vars.settings[settingKey] = not vars.settings[settingKey]
+		vars.saveSettings()
+		refresh()
+	end)
+	vars.settingToggleButtons[settingKey] = refresh
+	refresh()
+	return button
+end
+
+vars.AutoLoadRow = vars.createSettingRow("AutoLoadSetting", "Auto load avatar on execution", "Restore your last selected avatar using the same apply method.", 62)
+vars.createSettingToggle(vars.AutoLoadRow, "autoLoadAvatar")
+
+vars.HideBindRow = vars.createSettingRow("HideBindSetting", "Hide UI bind", "Press a key to hide or show this window.", 62)
+vars.HideBindButton = Instance.new("TextButton")
+vars.HideBindButton.Name = "CaptureHideBind"
+vars.HideBindButton.Size = UDim2.fromOffset(122, 28)
+vars.HideBindButton.Position = UDim2.new(1, -134, 0.5, -14)
+vars.HideBindButton.BackgroundColor3 = vars.COLORS.Surface3
+vars.HideBindButton.BorderSizePixel = 0
+vars.HideBindButton.TextColor3 = vars.COLORS.Text
+vars.HideBindButton.TextSize = 10
+vars.HideBindButton.FontFace = vars.uiFont(vars.UI_WEIGHT)
+vars.HideBindButton.Text = tostring(vars.settings.hideBind or "RightShift")
+vars.HideBindButton.AutoButtonColor = false
+vars.HideBindButton.Parent = vars.HideBindRow
+vars.addCorner(vars.HideBindButton, 6)
+vars.addStroke(vars.HideBindButton, vars.COLORS.Border, 1, 0.15)
+vars.wire(vars.HideBindButton.Activated, function()
+	vars.settingsCapturingBind = true
+	vars.HideBindButton.Text = "Press a key..."
+	vars.HideBindButton.TextColor3 = vars.COLORS.Accent
+end)
+
+vars.ThemeRow = vars.createSettingRow("ThemeSetting", "UI theme", "Four dark palettes. The change applies immediately.", 76)
+vars.ThemeControls = Instance.new("Frame")
+vars.ThemeControls.Name = "ThemeOptions"
+vars.ThemeControls.Size = UDim2.fromOffset(204, 30)
+vars.ThemeControls.Position = UDim2.new(1, -216, 0.5, -15)
+vars.ThemeControls.BackgroundTransparency = 1
+vars.ThemeControls.Parent = vars.ThemeRow
+for index, themeName in ipairs(vars.THEME_NAMES) do
+	local themeButton = Instance.new("TextButton")
+	themeButton.Name = themeName .. "Theme"
+	themeButton.Size = UDim2.fromOffset(48, 28)
+	themeButton.Position = UDim2.fromOffset((index - 1) * 52, 1)
+	themeButton.BackgroundColor3 = vars.COLORS.Surface3
+	themeButton.BorderSizePixel = 0
+	themeButton.Text = themeName
+	themeButton.TextColor3 = vars.COLORS.Text
+	themeButton.TextSize = 8
+	themeButton.TextScaled = true
+	themeButton.FontFace = vars.uiFont(vars.UI_WEIGHT)
+	themeButton.AutoButtonColor = false
+	themeButton.Parent = vars.ThemeControls
+	vars.addCorner(themeButton, 5)
+	vars.addStroke(themeButton, vars.COLORS.Border, 1, 0.15)
+	vars.themeButtons[themeName] = themeButton
+end
+
+vars.ShowUIRow = vars.createSettingRow("ShowUISetting", "Show UI on execution", "Keep the window visible whenever the script starts.", 62)
+vars.createSettingToggle(vars.ShowUIRow, "showUIOnExecution")
+
+vars.refreshThemeButtons = function()
+	for themeName, button in pairs(vars.themeButtons) do
+		local selected = vars.settings.theme == themeName
+		button.BackgroundColor3 = selected and vars.COLORS.Accent2 or vars.COLORS.Surface3
+		button.TextColor3 = selected and vars.COLORS.Text or vars.COLORS.Muted
+		local stroke = button:FindFirstChildOfClass("UIStroke")
+		if stroke then stroke.Color = selected and vars.COLORS.Accent or vars.COLORS.Border end
+	end
+end
+
+vars.applyTheme = function(themeName)
+	local newColors = vars.THEMES[themeName]
+	if not newColors then return end
+	local oldColors = vars.COLORS
+	local colorPairs = {}
+	for key, oldColor in pairs(oldColors) do
+		colorPairs[#colorPairs + 1] = {Old = oldColor, New = newColors[key] or oldColor}
+	end
+	local function remapColor(color)
+		for _, pair in ipairs(colorPairs) do
+			if color == pair.Old then return pair.New end
+		end
+		return color
+	end
+	for _, object in ipairs(vars.ScreenGui:GetDescendants()) do
+		pcall(function()
+			if object:IsA("GuiObject") then object.BackgroundColor3 = remapColor(object.BackgroundColor3) end
+			if object:IsA("TextLabel") or object:IsA("TextButton") or object:IsA("TextBox") then
+				object.TextColor3 = remapColor(object.TextColor3)
+			end
+			if object:IsA("TextBox") then object.PlaceholderColor3 = remapColor(object.PlaceholderColor3) end
+			if object:IsA("UIStroke") then object.Color = remapColor(object.Color) end
+			if object:IsA("UIGradient") then
+				local points = {}
+				for _, point in ipairs(object.Color.Keypoints) do
+					points[#points + 1] = ColorSequenceKeypoint.new(point.Time, remapColor(point.Value))
+				end
+				object.Color = ColorSequence.new(points)
+			end
+		end)
+	end
+	vars.COLORS = newColors
+	vars.settings.theme = themeName
+	vars.saveSettings()
+	vars.MainGradient.Color = ColorSequence.new(newColors.Background:Lerp(newColors.Surface, 0.25), newColors.Background)
+	vars.refreshThemeButtons()
+	for _, refresh in pairs(vars.settingToggleButtons) do refresh() end
+	if vars.updatePlaceholderToggleVisual then vars.updatePlaceholderToggleVisual() end
+end
+
+for themeName, themeButton in pairs(vars.themeButtons) do
+	local selectedTheme = themeName
+	vars.wire(themeButton.Activated, function()
+		vars.applyTheme(selectedTheme)
+	end)
+end
+
+vars.updateSettingsPage = function()
+	local visible = not vars.minimized
+	vars.Title.Text = vars.settingsOpen and "Settings" or "Avatar - Z"
+	vars.SettingsIcon.TextColor3 = vars.settingsOpen and vars.COLORS.Text or vars.COLORS.Muted
+	vars.SearchRow.Visible = visible and not vars.settingsOpen
+	vars.List.Visible = visible and not vars.settingsOpen
+	vars.SaveBar.Visible = visible and not vars.settingsOpen
+	vars.SettingsList.Visible = visible and vars.settingsOpen
+	vars.SettingsButton.Visible = visible
+end
+vars.wire(vars.SettingsButton.Activated, function()
+	if vars.minimized then return end
+	vars.settingsOpen = not vars.settingsOpen
+	vars.updateSettingsPage()
+end)
+vars.wire(vars.SettingsButton.MouseEnter, function()
+	vars.TweenService:Create(vars.SettingsButton, TweenInfo.new(0.12), {BackgroundColor3 = vars.COLORS.Surface3}):Play()
+	vars.TweenService:Create(vars.SettingsIcon, TweenInfo.new(0.12), {TextColor3 = vars.COLORS.Text}):Play()
+end)
+vars.wire(vars.SettingsButton.MouseLeave, function()
+	vars.TweenService:Create(vars.SettingsButton, TweenInfo.new(0.12), {BackgroundColor3 = vars.COLORS.Surface3}):Play()
+	vars.TweenService:Create(vars.SettingsIcon, TweenInfo.new(0.12), {TextColor3 = vars.settingsOpen and vars.COLORS.Text or vars.COLORS.Muted}):Play()
+end)
+vars.refreshThemeButtons()
+vars.updateSettingsPage()
+vars.HideBindButton.Text = vars.settings.hideBind ~= "" and tostring(vars.settings.hideBind or "RightShift") or "None"
+
+vars.setUIVisible = function(visible)
+	visible = visible == true
+	vars.Main.Visible = visible
+	vars.MainShadowOuter.Visible = visible
+	vars.MainShadowInner.Visible = visible
+	if not visible and vars.stopHoverPreview then vars.stopHoverPreview() end
+end
+
+vars.wire(vars.UserInputService.InputBegan, function(input)
+	if vars.settingsCapturingBind then
+		if input.KeyCode == Enum.KeyCode.Unknown then return end
+		if input.KeyCode == Enum.KeyCode.Escape then
+			vars.settingsCapturingBind = false
+			vars.HideBindButton.Text = tostring(vars.settings.hideBind or "None")
+			vars.HideBindButton.TextColor3 = vars.COLORS.Text
+			return
+		end
+		if input.KeyCode == Enum.KeyCode.Backspace or input.KeyCode == Enum.KeyCode.Delete then
+			vars.settings.hideBind = ""
+		else
+			vars.settings.hideBind = input.KeyCode.Name
+		end
+		vars.settingsCapturingBind = false
+		vars.HideBindButton.Text = vars.settings.hideBind ~= "" and vars.settings.hideBind or "None"
+		vars.HideBindButton.TextColor3 = vars.COLORS.Text
+		vars.saveSettings()
+		return
+	end
+	if input.KeyCode ~= Enum.KeyCode.Unknown and vars.settings.hideBind ~= "" and input.KeyCode.Name == vars.settings.hideBind then
+		if vars.UserInputService:GetFocusedTextBox() then return end
+		vars.setUIVisible(not vars.Main.Visible)
+	end
+end)
 
 vars.Footer = Instance.new("Frame")
 vars.Footer.Name = "Footer"
@@ -4314,6 +4682,15 @@ vars.tryOnSelectedAvatarLocally = function()	if vars.localTryOnBuilding then ret
 		return
 	end
 
+	vars.settings.lastAvatar = {
+		Signature = selectedData.Signature or vars.getAvatarSignature(selectedData.Properties, selectedData.RigType or "R6"),
+		FilePath = selectedData.FilePath,
+		FileName = selectedData.FileName,
+		Name = selectedData.DisplayName or selectedData.Name or selectedData.Username
+	}
+	vars.settings.lastMethod = vars.placeholderMode and "placeholder" or "normal"
+	vars.saveSettings()
+
 	if vars.IS_CATALOG_AVATAR_CREATOR then
 		local ok, err = vars.wearAvatarThroughCatalog(selectedData)
 		if ok then
@@ -4980,6 +5357,36 @@ vars.wire(vars.RefreshButton.Activated, function()
 	end)
 end)
 
+vars.restoreLastAvatar = function()
+	if not vars.settings.autoLoadAvatar or type(vars.settings.lastAvatar) ~= "table" then return false end
+	local last = vars.settings.lastAvatar
+	local match = nil
+	for _, data in ipairs(vars.ui.savedAvatars or {}) do
+		local signature = data.Signature
+		if not signature and data.Properties then signature = vars.getAvatarSignature(data.Properties, data.RigType or "R6") end
+		if (last.Signature and signature == last.Signature) or (last.FilePath and data.FilePath == last.FilePath) or (last.FileName and data.FileName == last.FileName) then
+			match = data
+			break
+		end
+	end
+	if not match then
+		vars.Status.Text = "[!] Auto-load: the last avatar could not be found in saved avatars."
+		return false
+	end
+	vars.ui.selectedAvatar = match
+	vars.placeholderMode = vars.settings.lastMethod == "placeholder"
+	vars.updatePlaceholderToggleVisual()
+	vars.updateRowVisuals(match)
+	vars.tryOnActive = true
+	vars.Status.Text = "[...] Restoring last avatar: " .. tostring(match.DisplayName or match.Name or match.Username or "avatar")
+	if vars.LocalPlayer.Character then
+		task.defer(function()
+			if vars.scriptAlive and vars.ui.selectedAvatar == match then vars.tryOnSelectedAvatarLocally() end
+		end)
+	end
+	return true
+end
+
 vars.updateMainShadow = function()
 	local pos = vars.Main.Position
 	local size = vars.Main.Size
@@ -5109,13 +5516,14 @@ vars.wire(vars.MinimizeButton.Activated, function()
 		vars.MinimizeIcon.Text = vars.BUILDER_ICONS.Maximize
 		vars.stopHoverPreview()
 		vars.Main.Size = UDim2.new(0, vars.minimizedWidth, 0, 44)
-		vars.SearchBox.Visible, vars.RefreshButton.Visible, vars.List.Visible = false, false, false
+		vars.SearchRow.Visible, vars.List.Visible, vars.SaveBar.Visible, vars.SettingsList.Visible = false, false, false, false
+		vars.SettingsButton.Visible = false
 		vars.Status.Visible, vars.ErrorPopup.Visible, vars.WearButton.Visible, vars.ConfirmOverlay.Visible = false, false, false, false
 	else
 		vars.MinimizeIcon.Text = vars.BUILDER_ICONS.Minimize
 		vars.Main.Size = UDim2.new(0, vars.mainWidth, 0, vars.savedMainHeight)
-		vars.SearchBox.Visible, vars.RefreshButton.Visible, vars.List.Visible = true, true, true
 		vars.Status.Visible, vars.WearButton.Visible = false, false
+		vars.updateSettingsPage()
 		if vars.currentConfirmAction then vars.ConfirmOverlay.Visible = true end
 	end
 	vars.updateMainShadow()
@@ -5132,6 +5540,8 @@ if vars.LocalPlayer.Character then vars.bindCharacterLifecycle(vars.LocalPlayer.
 
 vars.loadSavedAvatars()
 vars.populateAvatarList()
+vars.restoreLastAvatar()
+if not vars.settings.showUIOnExecution then vars.setUIVisible(false) end
 task.defer(function()
 	if vars.scriptAlive and not vars.previewQueueRunning then task.spawn(vars.processPreviewQueue) end
 end)
@@ -5141,3 +5551,4 @@ end)
 if not vars.success then
 	warn("[Local Wearer] " .. tostring(vars.err))
 end
+print("hi")
