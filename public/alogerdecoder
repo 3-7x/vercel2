@@ -618,7 +618,7 @@ function getaudio(place)
 						end)
 						newsound.Click.MouseButton1Click:Connect(function()
 							if GUI.Info.Visible ~= true then
-								GUI.Info.TextLabel.Text = "Name: " ..audioname.. "\n\nID: " .. child.SoundId .. "\n\nWorkspace Name: " .. child.Name
+								GUI.Info.TextLabel.Text = "Name: " ..audioname.. "\n\nID: " .. child.SoundId .. "\n\nWorkspace Name:\n" .. child:GetFullName()
 								selectedaudio = child.SoundId
 								GUI.Info.Visible = true
 							end
